@@ -1,13 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  withDelay,
-  Easing,
-} from 'react-native-reanimated';
+import React, { useEffect, useRef } from 'react';
+import { View, StyleSheet, Animated, Easing } from 'react-native';
 import { colors } from '../../theme';
 
 interface VenueMarkerProps {
@@ -16,33 +8,44 @@ interface VenueMarkerProps {
 }
 
 export function VenueMarker({ isTonight = false, isSelected = false }: VenueMarkerProps) {
-  const pulseScale = useSharedValue(1);
-  const pulseOpacity = useSharedValue(0.6);
+  const pulseScale = useRef(new Animated.Value(1)).current;
+  const pulseOpacity = useRef(new Animated.Value(0.6)).current;
 
   useEffect(() => {
     if (isTonight) {
-      pulseScale.value = withRepeat(
-        withTiming(2.2, { duration: 1500, easing: Easing.out(Easing.ease) }),
-        -1,
-        false
+      const animation = Animated.loop(
+        Animated.parallel([
+          Animated.timing(pulseScale, {
+            toValue: 2.2,
+            duration: 1500,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseOpacity, {
+            toValue: 0,
+            duration: 1500,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ])
       );
-      pulseOpacity.value = withRepeat(
-        withTiming(0, { duration: 1500, easing: Easing.out(Easing.ease) }),
-        -1,
-        false
-      );
+      animation.start();
+      return () => animation.stop();
     }
   }, [isTonight]);
-
-  const pulseAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.value }],
-    opacity: pulseOpacity.value,
-  }));
 
   return (
     <View style={styles.container}>
       {isTonight && (
-        <Animated.View style={[styles.pulse, pulseAnimatedStyle]} />
+        <Animated.View
+          style={[
+            styles.pulse,
+            {
+              transform: [{ scale: pulseScale }],
+              opacity: pulseOpacity,
+            },
+          ]}
+        />
       )}
       <View style={[
         styles.pin,
