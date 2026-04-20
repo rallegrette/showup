@@ -98,9 +98,14 @@ export default function MapScreen() {
     return map;
   }, [shows]);
 
+  const flatListRef = useRef<FlatList<Show>>(null);
+
   const handleMarkerPress = useCallback((venueId: string) => {
     setSelectedVenueId(venueId);
     snapTo(SNAP_MID);
+    setTimeout(() => {
+      flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+    }, 100);
   }, [snapTo]);
 
   const sortedShows = useMemo(() => {
@@ -110,9 +115,33 @@ export default function MapScreen() {
     return [...venueShowsList, ...otherShows];
   }, [shows, selectedVenueId, venueShows]);
 
-  const renderShowItem = useCallback(({ item }: { item: Show }) => (
-    <ShowCard show={item} />
-  ), []);
+  const selectedVenueShowIds = useMemo(() => {
+    if (!selectedVenueId) return new Set<string>();
+    return new Set((venueShows.get(selectedVenueId) || []).map((s) => s.id));
+  }, [selectedVenueId, venueShows]);
+
+  const renderShowItem = useCallback(({ item, index }: { item: Show; index: number }) => {
+    const isVenueMatch = selectedVenueShowIds.has(item.id);
+    const isLastMatch = isVenueMatch && index < sortedShows.length - 1 && !selectedVenueShowIds.has(sortedShows[index + 1]?.id);
+
+    return (
+      <View>
+        {isVenueMatch && (
+          <View style={styles.matchIndicator} />
+        )}
+        <ShowCard show={item} />
+        {isLastMatch && (
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text variant="caption" color="textTertiary" style={styles.dividerText}>
+              Other shows nearby
+            </Text>
+            <View style={styles.dividerLine} />
+          </View>
+        )}
+      </View>
+    );
+  }, [selectedVenueShowIds, sortedShows]);
 
   return (
     <View style={styles.container}>
@@ -182,6 +211,7 @@ export default function MapScreen() {
           </View>
         </View>
         <FlatList
+          ref={flatListRef}
           data={sortedShows}
           keyExtractor={(item) => item.id}
           renderItem={renderShowItem}
