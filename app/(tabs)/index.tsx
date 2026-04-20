@@ -1,8 +1,8 @@
 import React, { useRef, useMemo, useCallback, useState } from 'react';
-import { View, StyleSheet, FlatList, Animated, PanResponder, Dimensions } from 'react-native';
+import { View, StyleSheet, FlatList, Animated, PanResponder, Dimensions, Platform } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MapPin } from 'lucide-react-native';
+import { MapPin, ChevronUp } from 'lucide-react-native';
 import { useShowStore } from '../../src/store/useShowStore';
 import { useLocation } from '../../src/hooks/useLocation';
 import { VenueMarker } from '../../src/components/map/VenueMarker';
@@ -13,9 +13,10 @@ import { Show } from '../../src/api/types';
 import { isToday, parseISO } from 'date-fns';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const SNAP_LOW = SCREEN_HEIGHT * 0.65;
-const SNAP_MID = SCREEN_HEIGHT * 0.35;
-const SNAP_HIGH = SCREEN_HEIGHT * 0.1;
+const TAB_BAR_HEIGHT = Platform.OS === 'ios' ? 88 : 64;
+const SNAP_LOW = SCREEN_HEIGHT - TAB_BAR_HEIGHT - 160;
+const SNAP_MID = SCREEN_HEIGHT * 0.4;
+const SNAP_HIGH = SCREEN_HEIGHT * 0.08;
 
 const darkMapStyle = [
   { elementType: 'geometry', stylers: [{ color: '#1a1a1a' }] },
@@ -35,26 +36,54 @@ export default function MapScreen() {
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapView>(null);
   const [selectedVenueId, setSelectedVenueId] = useState<string | null>(null);
+  const [sheetExpanded, setSheetExpanded] = useState(false);
 
   const sheetY = useRef(new Animated.Value(SNAP_LOW)).current;
   const lastY = useRef(SNAP_LOW);
 
+  const snapTo = useCallback((target: number) => {
+    lastY.current = target;
+    setSheetExpanded(target <= SNAP_MID);
+    Animated.spring(sheetY, {
+      toValue: target,
+      useNativeDriver: false,
+      speed: 18,
+      bounciness: 3,
+    }).start();
+  }, [sheetY]);
+
   const panResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 5,
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 8,
       onPanResponderMove: (_, g) => {
         const newY = Math.max(SNAP_HIGH, Math.min(SNAP_LOW, lastY.current + g.dy));
         sheetY.setValue(newY);
       },
       onPanResponderRelease: (_, g) => {
         const currentY = lastY.current + g.dy;
-        let snapTo: number;
-        if (currentY < (SNAP_HIGH + SNAP_MID) / 2) snapTo = SNAP_HIGH;
-        else if (currentY < (SNAP_MID + SNAP_LOW) / 2) snapTo = SNAP_MID;
-        else snapTo = SNAP_LOW;
+        const velocity = g.vy;
 
-        lastY.current = snapTo;
-        Animated.spring(sheetY, { toValue: snapTo, useNativeDriver: false, speed: 20, bounciness: 4 }).start();
+        let target: number;
+        if (velocity < -0.5) {
+          // Fast swipe up
+          if (currentY > SNAP_MID) target = SNAP_MID;
+          else target = SNAP_HIGH;
+        } else if (velocity > 0.5) {
+          // Fast swipe down
+          if (currentY < SNAP_MID) target = SNAP_MID;
+          else target = SNAP_LOW;
+        } else {
+          // Slow drag, snap to nearest
+          const distances = [
+            { point: SNAP_HIGH, dist: Math.abs(currentY - SNAP_HIGH) },
+            { point: SNAP_MID, dist: Math.abs(currentY - SNAP_MID) },
+            { point: SNAP_LOW, dist: Math.abs(currentY - SNAP_LOW) },
+          ];
+          distances.sort((a, b) => a.dist - b.dist);
+          target = distances[0].point;
+        }
+
+        snapTo(target);
       },
     })
   ).current;
@@ -71,9 +100,8 @@ export default function MapScreen() {
 
   const handleMarkerPress = useCallback((venueId: string) => {
     setSelectedVenueId(venueId);
-    lastY.current = SNAP_MID;
-    Animated.spring(sheetY, { toValue: SNAP_MID, useNativeDriver: false, speed: 20, bounciness: 4 }).start();
-  }, []);
+    snapTo(SNAP_MID);
+  }, [snapTo]);
 
   const sortedShows = useMemo(() => {
     if (!selectedVenueId) return shows;
@@ -131,19 +159,27 @@ export default function MapScreen() {
       </View>
 
       <Animated.View style={[styles.sheet, { top: sheetY }]}>
-        <View {...panResponder.panHandlers} style={styles.sheetHandleArea}>
+        <View {...panResponder.panHandlers} style={styles.dragArea}>
           <View style={styles.sheetHandle} />
-        </View>
-        <View style={styles.sheetHeader}>
-          <Text variant="title2">
-            {selectedVenueId
-              ? venueShows.get(selectedVenueId)?.[0]?.venue.name ?? 'Shows'
-              : 'Nearby Shows'
-            }
-          </Text>
-          <Text variant="caption" color="textSecondary">
-            {sortedShows.length} show{sortedShows.length !== 1 ? 's' : ''}
-          </Text>
+          <View style={styles.sheetHeader}>
+            <View>
+              <Text variant="title2">
+                {selectedVenueId
+                  ? venueShows.get(selectedVenueId)?.[0]?.venue.name ?? 'Shows'
+                  : 'Nearby Shows'
+                }
+              </Text>
+              <Text variant="caption" color="textSecondary" style={{ marginTop: 2 }}>
+                {sortedShows.length} show{sortedShows.length !== 1 ? 's' : ''}
+              </Text>
+            </View>
+            {!sheetExpanded && (
+              <View style={styles.pullHint}>
+                <ChevronUp size={16} color={colors.textTertiary} />
+                <Text variant="micro" color="textTertiary">Pull up</Text>
+              </View>
+            )}
+          </View>
         </View>
         <FlatList
           data={sortedShows}
@@ -151,6 +187,7 @@ export default function MapScreen() {
           renderItem={renderShowItem}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
+          scrollEnabled={sheetExpanded}
         />
       </Animated.View>
     </View>
@@ -193,24 +230,29 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: colors.border,
   },
-  sheetHandleArea: {
-    alignItems: 'center',
-    paddingVertical: 10,
+  dragArea: {
+    paddingTop: 10,
   },
   sheetHandle: {
     width: 36,
     height: 4,
     borderRadius: 2,
     backgroundColor: colors.textTertiary,
+    alignSelf: 'center',
+    marginBottom: 8,
   },
   sheetHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
+    alignItems: 'center',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    paddingBottom: spacing.md,
+  },
+  pullHint: {
+    alignItems: 'center',
+    gap: 2,
   },
   listContent: {
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
 });
