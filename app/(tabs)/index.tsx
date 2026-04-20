@@ -1,9 +1,8 @@
 import React, { useRef, useMemo, useCallback, useState } from 'react';
-import { View, StyleSheet, Dimensions, Platform } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 import { MapPin } from 'lucide-react-native';
 import { useShowStore } from '../../src/store/useShowStore';
 import { useLocation } from '../../src/hooks/useLocation';
@@ -13,8 +12,6 @@ import { Text } from '../../src/components/ui/Text';
 import { colors, spacing } from '../../src/theme';
 import { Show } from '../../src/api/types';
 import { isToday, parseISO } from 'date-fns';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const darkMapStyle = [
   { elementType: 'geometry', stylers: [{ color: '#1a1a1a' }] },
