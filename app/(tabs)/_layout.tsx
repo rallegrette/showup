@@ -1,6 +1,5 @@
 import { Tabs } from 'expo-router';
 import { View, StyleSheet, Platform } from 'react-native';
-import { BlurView } from 'expo-blur' ;
 import { Map, Music, Users, User } from 'lucide-react-native';
 import { colors, spacing } from '../../src/theme';
 import { useHaptics } from '../../src/hooks/useHaptics';

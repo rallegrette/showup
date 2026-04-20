@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
   heroGradient: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(13, 13, 13, 0.5)',
-    backgroundImage: undefined,
   },
   heroOverlay: {
     position: 'absolute',
