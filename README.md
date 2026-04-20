@@ -14,6 +14,21 @@ ShowUp starts from that experience. The default screen is a map. Venues pulse wh
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/map.png" width="200" alt="Map View" />
+  <img src="docs/screenshots/shows.png" width="200" alt="Show Feed" />
+  <img src="docs/screenshots/show-detail-top.png" width="200" alt="Show Detail" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/show-detail-bottom.png" width="200" alt="Show Detail - Reactions" />
+  <img src="docs/screenshots/friends.png" width="200" alt="Friends Activity" />
+  <img src="docs/screenshots/profile.png" width="200" alt="Profile" />
+</p>
+
+---
+
 ## Screens
 
 ### Map View
