@@ -1,7 +1,6 @@
 import React, { useRef, useMemo, useCallback, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, FlatList, Animated, PanResponder, Dimensions } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
-import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MapPin } from 'lucide-react-native';
 import { useShowStore } from '../../src/store/useShowStore';
@@ -12,6 +11,11 @@ import { Text } from '../../src/components/ui/Text';
 import { colors, spacing } from '../../src/theme';
 import { Show } from '../../src/api/types';
 import { isToday, parseISO } from 'date-fns';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const SNAP_LOW = SCREEN_HEIGHT * 0.65;
+const SNAP_MID = SCREEN_HEIGHT * 0.35;
+const SNAP_HIGH = SCREEN_HEIGHT * 0.1;
 
 const darkMapStyle = [
   { elementType: 'geometry', stylers: [{ color: '#1a1a1a' }] },
@@ -29,11 +33,31 @@ export default function MapScreen() {
   const shows = useShowStore((s) => s.shows);
   const { location } = useLocation();
   const insets = useSafeAreaInsets();
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const mapRef = useRef<MapView>(null);
   const [selectedVenueId, setSelectedVenueId] = useState<string | null>(null);
 
-  const snapPoints = useMemo(() => ['25%', '50%', '85%'], []);
+  const sheetY = useRef(new Animated.Value(SNAP_LOW)).current;
+  const lastY = useRef(SNAP_LOW);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 5,
+      onPanResponderMove: (_, g) => {
+        const newY = Math.max(SNAP_HIGH, Math.min(SNAP_LOW, lastY.current + g.dy));
+        sheetY.setValue(newY);
+      },
+      onPanResponderRelease: (_, g) => {
+        const currentY = lastY.current + g.dy;
+        let snapTo: number;
+        if (currentY < (SNAP_HIGH + SNAP_MID) / 2) snapTo = SNAP_HIGH;
+        else if (currentY < (SNAP_MID + SNAP_LOW) / 2) snapTo = SNAP_MID;
+        else snapTo = SNAP_LOW;
+
+        lastY.current = snapTo;
+        Animated.spring(sheetY, { toValue: snapTo, useNativeDriver: false, speed: 20, bounciness: 4 }).start();
+      },
+    })
+  ).current;
 
   const venueShows = useMemo(() => {
     const map = new Map<string, Show[]>();
@@ -47,7 +71,8 @@ export default function MapScreen() {
 
   const handleMarkerPress = useCallback((venueId: string) => {
     setSelectedVenueId(venueId);
-    bottomSheetRef.current?.snapToIndex(1);
+    lastY.current = SNAP_MID;
+    Animated.spring(sheetY, { toValue: SNAP_MID, useNativeDriver: false, speed: 20, bounciness: 4 }).start();
   }, []);
 
   const sortedShows = useMemo(() => {
@@ -105,14 +130,10 @@ export default function MapScreen() {
         </View>
       </View>
 
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={0}
-        snapPoints={snapPoints}
-        backgroundStyle={styles.sheetBackground}
-        handleIndicatorStyle={styles.sheetHandle}
-        enablePanDownToClose={false}
-      >
+      <Animated.View style={[styles.sheet, { top: sheetY }]}>
+        <View {...panResponder.panHandlers} style={styles.sheetHandleArea}>
+          <View style={styles.sheetHandle} />
+        </View>
         <View style={styles.sheetHeader}>
           <Text variant="title2">
             {selectedVenueId
@@ -124,14 +145,14 @@ export default function MapScreen() {
             {sortedShows.length} show{sortedShows.length !== 1 ? 's' : ''}
           </Text>
         </View>
-        <BottomSheetFlatList
+        <FlatList
           data={sortedShows}
           keyExtractor={(item) => item.id}
           renderItem={renderShowItem}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />
-      </BottomSheet>
+      </Animated.View>
     </View>
   );
 }
@@ -161,16 +182,26 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: colors.border,
   },
-  sheetBackground: {
+  sheet: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: colors.background,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     borderWidth: 0.5,
     borderColor: colors.border,
   },
+  sheetHandleArea: {
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
   sheetHandle: {
-    backgroundColor: colors.textTertiary,
     width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.textTertiary,
   },
   sheetHeader: {
     flexDirection: 'row',
