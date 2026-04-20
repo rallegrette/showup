@@ -53,30 +53,32 @@ export default function FeedScreen() {
         <Text variant="callout" color="textSecondary">Upcoming near you</Text>
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterScroll}
-        contentContainerStyle={styles.filterContent}
-      >
-        {GENRES.map((genre) => (
-          <Pressable
-            key={genre}
-            onPress={() => setSelectedGenre(genre)}
-            style={[
-              styles.filterChip,
-              selectedGenre === genre && styles.filterChipActive,
-            ]}
-          >
-            <Text
-              variant="captionMedium"
-              color={selectedGenre === genre ? 'white' : 'textSecondary'}
+      <View style={styles.filterRow}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterContent}
+        >
+          {GENRES.map((genre) => (
+            <Pressable
+              key={genre}
+              onPress={() => setSelectedGenre(genre)}
+              style={[
+                styles.filterChip,
+                selectedGenre === genre && styles.filterChipActive,
+              ]}
             >
-              {genre}
-            </Text>
-          </Pressable>
-        ))}
-      </ScrollView>
+              <Text
+                variant="captionMedium"
+                color={selectedGenre === genre ? 'white' : 'textSecondary'}
+                numberOfLines={1}
+              >
+                {genre}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -118,18 +120,21 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingBottom: spacing.sm,
   },
-  filterScroll: {
-    flexGrow: 0,
-    marginBottom: spacing.md,
+  filterRow: {
+    height: 48,
+    marginBottom: spacing.sm,
   },
   filterContent: {
     paddingHorizontal: spacing.lg,
     gap: spacing.sm,
     alignItems: 'center',
+    height: 48,
   },
   filterChip: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: 10,
+    paddingHorizontal: 14,
+    height: 34,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: radii.full,
     backgroundColor: colors.surface,
     borderWidth: 1,
