@@ -105,8 +105,15 @@ export default function MapScreen() {
     snapTo(SNAP_MID);
     setTimeout(() => {
       flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-    }, 100);
+    }, 150);
   }, [snapTo]);
+
+  const onMapMarkerPress = useCallback((e: any) => {
+    const markerId = e.nativeEvent?.id ?? e.nativeEvent?.identifier;
+    if (markerId) {
+      handleMarkerPress(markerId);
+    }
+  }, [handleMarkerPress]);
 
   const sortedShows = useMemo(() => {
     if (!selectedVenueId) return shows;
@@ -159,6 +166,7 @@ export default function MapScreen() {
         showsUserLocation
         showsMyLocationButton={false}
         onPress={() => setSelectedVenueId(null)}
+        onMarkerPress={onMapMarkerPress}
       >
         {Array.from(venueShows.entries()).map(([venueId, vShows]) => {
           const venue = vShows[0].venue;
@@ -166,8 +174,10 @@ export default function MapScreen() {
           return (
             <Marker
               key={venueId}
+              identifier={venueId}
               coordinate={venue.coordinates}
               onPress={() => handleMarkerPress(venueId)}
+              tracksViewChanges={false}
             >
               <VenueMarker
                 isTonight={hasTonight}
