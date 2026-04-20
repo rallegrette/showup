@@ -1,30 +1,8 @@
 import { Tabs } from 'expo-router';
-import { View, StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { Map, Music, Users, User } from 'lucide-react-native';
-import { colors, spacing } from '../../src/theme';
+import { colors } from '../../src/theme';
 import { useHaptics } from '../../src/hooks/useHaptics';
-import { Text } from '../../src/components/ui/Text';
-
-function TabIcon({ icon: Icon, focused, label }: { icon: typeof Map; focused: boolean; label: string }) {
-  return (
-    <View style={styles.tabItem}>
-      <Icon
-        size={22}
-        color={focused ? colors.primary : colors.textTertiary}
-        strokeWidth={focused ? 2.5 : 1.8}
-      />
-      <Text
-        variant="micro"
-        style={{
-          color: focused ? colors.primary : colors.textTertiary,
-          marginTop: 2,
-        }}
-      >
-        {label}
-      </Text>
-    </View>
-  );
-}
 
 export default function TabLayout() {
   const haptics = useHaptics();
@@ -34,9 +12,9 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: styles.tabBar,
-        tabBarShowLabel: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textTertiary,
+        tabBarLabelStyle: styles.tabLabel,
       }}
       screenListeners={{
         tabPress: () => haptics.selection(),
@@ -45,33 +23,29 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon icon={Map} focused={focused} label="Map" />
-          ),
+          title: 'Map',
+          tabBarIcon: ({ color }) => <Map size={22} color={color} />,
         }}
       />
       <Tabs.Screen
         name="feed"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon icon={Music} focused={focused} label="Shows" />
-          ),
+          title: 'Shows',
+          tabBarIcon: ({ color }) => <Music size={22} color={color} />,
         }}
       />
       <Tabs.Screen
         name="activity"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon icon={Users} focused={focused} label="Friends" />
-          ),
+          title: 'Friends',
+          tabBarIcon: ({ color }) => <Users size={22} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon icon={User} focused={focused} label="Profile" />
-          ),
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <User size={22} color={color} />,
         }}
       />
     </Tabs>
@@ -83,14 +57,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(13, 13, 13, 0.95)',
     borderTopColor: colors.border,
     borderTopWidth: 0.5,
-    height: Platform.OS === 'ios' ? 95 : 70,
+    height: Platform.OS === 'ios' ? 88 : 64,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 8,
     paddingTop: 8,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 10,
     elevation: 0,
     shadowOpacity: 0,
   },
-  tabItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  tabLabel: {
+    fontSize: 10,
+    fontWeight: '500',
   },
 });
