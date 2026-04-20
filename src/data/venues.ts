@@ -7,7 +7,7 @@ export const mockVenues: Venue[] = [
     address: '1805 Geary Blvd',
     city: 'San Francisco',
     coordinates: { latitude: 37.7842, longitude: -122.4334 },
-    imageUrl: 'https://images.unsplash.com/photo-1501386761578-0a55d5f0e4e1?w=800',
+    imageUrl: 'https://picsum.photos/seed/fillmore/800/400',
   },
   {
     id: 'v2',
@@ -15,7 +15,7 @@ export const mockVenues: Venue[] = [
     address: '628 Divisadero St',
     city: 'San Francisco',
     coordinates: { latitude: 37.7757, longitude: -122.4378 },
-    imageUrl: 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=800',
+    imageUrl: 'https://picsum.photos/seed/independent/800/400',
   },
   {
     id: 'v3',
@@ -23,7 +23,7 @@ export const mockVenues: Venue[] = [
     address: '859 O\'Farrell St',
     city: 'San Francisco',
     coordinates: { latitude: 37.7854, longitude: -122.4183 },
-    imageUrl: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800',
+    imageUrl: 'https://picsum.photos/seed/gamh/800/400',
   },
   {
     id: 'v4',
@@ -31,7 +31,7 @@ export const mockVenues: Venue[] = [
     address: '777 Valencia St',
     city: 'San Francisco',
     coordinates: { latitude: 37.7601, longitude: -122.4216 },
-    imageUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800',
+    imageUrl: 'https://picsum.photos/seed/chapel/800/400',
   },
   {
     id: 'v5',
@@ -39,7 +39,7 @@ export const mockVenues: Venue[] = [
     address: '1233 17th St',
     city: 'San Francisco',
     coordinates: { latitude: 37.7648, longitude: -122.3962 },
-    imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800',
+    imageUrl: 'https://picsum.photos/seed/bottomhill/800/400',
   },
   {
     id: 'v6',
@@ -47,7 +47,7 @@ export const mockVenues: Venue[] = [
     address: '1807 Telegraph Ave',
     city: 'Oakland',
     coordinates: { latitude: 37.8075, longitude: -122.2697 },
-    imageUrl: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800',
+    imageUrl: 'https://picsum.photos/seed/foxtheater/800/400',
   },
   {
     id: 'v7',
@@ -55,7 +55,7 @@ export const mockVenues: Venue[] = [
     address: '155 Fell St',
     city: 'San Francisco',
     coordinates: { latitude: 37.7748, longitude: -122.4222 },
-    imageUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
+    imageUrl: 'https://picsum.photos/seed/rickshaw/800/400',
   },
   {
     id: 'v8',
@@ -63,6 +63,6 @@ export const mockVenues: Venue[] = [
     address: '982 Market St',
     city: 'San Francisco',
     coordinates: { latitude: 37.7826, longitude: -122.4100 },
-    imageUrl: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=800',
+    imageUrl: 'https://picsum.photos/seed/warfield/800/400',
   },
 ];
