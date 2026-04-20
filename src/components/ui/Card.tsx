@@ -1,10 +1,7 @@
-import React from 'react';
-import { Pressable, StyleSheet, ViewStyle } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import React, { useRef } from 'react';
+import { Pressable, StyleSheet, ViewStyle, Animated } from 'react-native';
 import { colors, spacing, radii } from '../../theme';
 import { useHaptics } from '../../hooks/useHaptics';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface CardProps {
   children: React.ReactNode;
@@ -14,22 +11,18 @@ interface CardProps {
 }
 
 export function Card({ children, onPress, style, elevated = false }: CardProps) {
-  const scale = useSharedValue(1);
+  const scale = useRef(new Animated.Value(1)).current;
   const haptics = useHaptics();
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
 
   const handlePressIn = () => {
     if (onPress) {
-      scale.value = withSpring(0.98, { damping: 15, stiffness: 300 });
+      Animated.spring(scale, { toValue: 0.98, useNativeDriver: true, speed: 50, bounciness: 4 }).start();
     }
   };
 
   const handlePressOut = () => {
     if (onPress) {
-      scale.value = withSpring(1, { damping: 15, stiffness: 300 });
+      Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50, bounciness: 4 }).start();
     }
   };
 
@@ -41,20 +34,21 @@ export function Card({ children, onPress, style, elevated = false }: CardProps) 
   };
 
   return (
-    <AnimatedPressable
-      onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      disabled={!onPress}
-      style={[
-        styles.card,
-        elevated && styles.elevated,
-        animatedStyle,
-        style,
-      ]}
-    >
-      {children}
-    </AnimatedPressable>
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <Pressable
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={!onPress}
+        style={[
+          styles.card,
+          elevated && styles.elevated,
+          style,
+        ]}
+      >
+        {children}
+      </Pressable>
+    </Animated.View>
   );
 }
 
