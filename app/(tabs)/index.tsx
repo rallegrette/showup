@@ -285,4 +285,28 @@ const styles = StyleSheet.create({
   listContent: {
     paddingBottom: 120,
   },
+  matchIndicator: {
+    position: 'absolute',
+    left: 4,
+    top: 8,
+    bottom: 8,
+    width: 3,
+    borderRadius: 1.5,
+    backgroundColor: colors.primary,
+    zIndex: 1,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  dividerLine: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.border,
+  },
+  dividerText: {
+    marginHorizontal: spacing.md,
+  },
 });
