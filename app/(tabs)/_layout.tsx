@@ -83,14 +83,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(13, 13, 13, 0.95)',
     borderTopColor: colors.border,
     borderTopWidth: 0.5,
-    height: Platform.OS === 'ios' ? 88 : 64,
-    paddingTop: spacing.sm,
+    height: Platform.OS === 'ios' ? 95 : 70,
+    paddingTop: 8,
+    paddingBottom: Platform.OS === 'ios' ? 28 : 10,
     elevation: 0,
     shadowOpacity: 0,
   },
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 4,
   },
 });
