@@ -1,10 +1,7 @@
-import React from 'react';
-import { Pressable, StyleSheet, ViewStyle } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
-import { colors, radii } from '../../theme';
+import React, { useRef } from 'react';
+import { Pressable, StyleSheet, ViewStyle, Animated } from 'react-native';
+import { colors } from '../../theme';
 import { useHaptics } from '../../hooks/useHaptics';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface IconButtonProps {
   icon: React.ReactNode;
@@ -14,39 +11,36 @@ interface IconButtonProps {
 }
 
 export function IconButton({ icon, onPress, size = 40, style }: IconButtonProps) {
-  const scale = useSharedValue(1);
+  const scale = useRef(new Animated.Value(1)).current;
   const haptics = useHaptics();
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
   const handlePressIn = () => {
-    scale.value = withSpring(0.9, { damping: 15, stiffness: 300 });
+    Animated.spring(scale, { toValue: 0.9, useNativeDriver: true, speed: 50, bounciness: 4 }).start();
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 300 });
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50, bounciness: 4 }).start();
   };
 
   return (
-    <AnimatedPressable
-      onPress={() => { haptics.light(); onPress(); }}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      style={[
-        styles.button,
-        {
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-        },
-        animatedStyle,
-        style,
-      ]}
-    >
-      {icon}
-    </AnimatedPressable>
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <Pressable
+        onPress={() => { haptics.light(); onPress(); }}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        style={[
+          styles.button,
+          {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+          },
+          style,
+        ]}
+      >
+        {icon}
+      </Pressable>
+    </Animated.View>
   );
 }
 
