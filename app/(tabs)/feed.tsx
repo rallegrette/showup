@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.sm,
   },
   filterScroll: {
-    maxHeight: 44,
+    flexGrow: 0,
     marginBottom: spacing.md,
   },
   filterContent: {
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   filterChip: {
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
+    paddingVertical: 10,
     borderRadius: radii.full,
     backgroundColor: colors.surface,
     borderWidth: 1,
