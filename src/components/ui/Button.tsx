@@ -1,11 +1,8 @@
-import React from 'react';
-import { Pressable, StyleSheet, ViewStyle } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import React, { useRef } from 'react';
+import { Pressable, StyleSheet, ViewStyle, Animated } from 'react-native';
 import { colors, spacing, radii } from '../../theme';
 import { Text } from './Text';
 import { useHaptics } from '../../hooks/useHaptics';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline';
 
@@ -26,19 +23,15 @@ export function Button({
   style,
   icon,
 }: ButtonProps) {
-  const scale = useSharedValue(1);
+  const scale = useRef(new Animated.Value(1)).current;
   const haptics = useHaptics();
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
   const handlePressIn = () => {
-    scale.value = withSpring(0.96, { damping: 15, stiffness: 300 });
+    Animated.spring(scale, { toValue: 0.96, useNativeDriver: true, speed: 50, bounciness: 4 }).start();
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 300 });
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 50, bounciness: 4 }).start();
   };
 
   const handlePress = () => {
@@ -49,28 +42,29 @@ export function Button({
   const variantStyles = getVariantStyles(variant);
 
   return (
-    <AnimatedPressable
-      onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      disabled={disabled}
-      style={[
-        styles.base,
-        variantStyles.container,
-        disabled && styles.disabled,
-        animatedStyle,
-        style,
-      ]}
-    >
-      {icon}
-      <Text
-        variant="calloutMedium"
-        color={variantStyles.textColor}
-        style={icon ? { marginLeft: spacing.sm } : undefined}
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <Pressable
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={disabled}
+        style={[
+          styles.base,
+          variantStyles.container,
+          disabled && styles.disabled,
+          style,
+        ]}
       >
-        {title}
-      </Text>
-    </AnimatedPressable>
+        {icon}
+        <Text
+          variant="calloutMedium"
+          color={variantStyles.textColor}
+          style={icon ? { marginLeft: spacing.sm } : undefined}
+        >
+          {title}
+        </Text>
+      </Pressable>
+    </Animated.View>
   );
 }
 
