@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { Settings } from 'lucide-react-native';
 import { useUserStore } from '../../src/store/useUserStore';
 import { useShowStore } from '../../src/store/useShowStore';
@@ -16,6 +17,7 @@ export default function ProfileScreen() {
   const currentUser = useUserStore((s) => s.currentUser);
   const pastShows = useShowStore((s) => s.pastShows);
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   if (!currentUser) {
     return (
@@ -31,7 +33,7 @@ export default function ProfileScreen() {
         <Text variant="title3">Profile</Text>
         <IconButton
           icon={<Settings size={20} color={colors.textSecondary} />}
-          onPress={() => {}}
+          onPress={() => router.push('/settings')}
           size={36}
         />
       </View>
