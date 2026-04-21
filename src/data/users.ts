@@ -45,6 +45,156 @@ export const mockFriends: User[] = [
   },
 ];
 
+export const mockOtherUsers: User[] = [
+  {
+    id: 'u8',
+    name: 'Liam Park',
+    username: 'liamp',
+    avatarUrl: 'https://i.pravatar.cc/150?img=11',
+    isOnline: false,
+  },
+  {
+    id: 'u9',
+    name: 'Elena Vasquez',
+    username: 'elenav',
+    avatarUrl: 'https://i.pravatar.cc/150?img=25',
+    isOnline: true,
+  },
+  {
+    id: 'u10',
+    name: 'Kai Nakamura',
+    username: 'kain',
+    avatarUrl: 'https://i.pravatar.cc/150?img=33',
+    isOnline: false,
+  },
+  {
+    id: 'u11',
+    name: 'Priya Sharma',
+    username: 'priyas',
+    avatarUrl: 'https://i.pravatar.cc/150?img=32',
+    isOnline: true,
+  },
+  {
+    id: 'u12',
+    name: 'Marcus Davis',
+    username: 'marcusd',
+    avatarUrl: 'https://i.pravatar.cc/150?img=52',
+    isOnline: false,
+  },
+  {
+    id: 'u13',
+    name: 'Zoe Kim',
+    username: 'zoek',
+    avatarUrl: 'https://i.pravatar.cc/150?img=44',
+    isOnline: true,
+  },
+];
+
+export const mockUserProfiles: Record<string, UserProfile> = {
+  u2: {
+    ...mockFriends[0],
+    bio: 'indie head. if the venue has sticky floors, i\'m there.',
+    showsAttended: 63,
+    totalReactions: 241,
+    friendCount: 12,
+    topReactions: ['fire', 'guitar', 'mindblown'],
+  },
+  u3: {
+    ...mockFriends[1],
+    bio: 'electronic music nerd, festival circuit regular',
+    showsAttended: 89,
+    totalReactions: 312,
+    friendCount: 24,
+    topReactions: ['dancing', 'fire', 'mindblown'],
+  },
+  u4: {
+    ...mockFriends[2],
+    bio: 'hip hop and r&b. front row or don\'t bother.',
+    showsAttended: 34,
+    totalReactions: 156,
+    friendCount: 8,
+    topReactions: ['fire', 'heart', 'clap'],
+  },
+  u5: {
+    ...mockFriends[3],
+    bio: 'pop girlie turned concert photographer',
+    showsAttended: 72,
+    totalReactions: 289,
+    friendCount: 31,
+    topReactions: ['heart', 'dancing', 'fire'],
+  },
+  u6: {
+    ...mockFriends[4],
+    bio: 'jazz bars on weekdays, rock shows on weekends',
+    showsAttended: 41,
+    totalReactions: 98,
+    friendCount: 9,
+    topReactions: ['guitar', 'clap', 'heart'],
+  },
+  u7: {
+    ...mockFriends[5],
+    bio: 'will drive 3 hours for a good opener',
+    showsAttended: 55,
+    totalReactions: 203,
+    friendCount: 17,
+    topReactions: ['fire', 'mindblown', 'dancing'],
+  },
+  u8: {
+    ...mockOtherUsers[0],
+    bio: 'bay area born. warehouse shows and dim sum.',
+    showsAttended: 28,
+    totalReactions: 87,
+    friendCount: 6,
+    topReactions: ['guitar', 'fire', 'clap'],
+  },
+  u9: {
+    ...mockOtherUsers[1],
+    bio: 'latina pop & reggaeton. always in the pit.',
+    showsAttended: 51,
+    totalReactions: 198,
+    friendCount: 22,
+    topReactions: ['dancing', 'heart', 'fire'],
+  },
+  u10: {
+    ...mockOtherUsers[2],
+    bio: 'bedroom producer who only listens live',
+    showsAttended: 19,
+    totalReactions: 45,
+    friendCount: 4,
+    topReactions: ['mindblown', 'guitar', 'fire'],
+  },
+  u11: {
+    ...mockOtherUsers[3],
+    bio: 'classical training, punk tendencies',
+    showsAttended: 38,
+    totalReactions: 134,
+    friendCount: 11,
+    topReactions: ['heart', 'clap', 'mindblown'],
+  },
+  u12: {
+    ...mockOtherUsers[4],
+    bio: 'old school soul and new school everything',
+    showsAttended: 66,
+    totalReactions: 267,
+    friendCount: 19,
+    topReactions: ['fire', 'heart', 'dancing'],
+  },
+  u13: {
+    ...mockOtherUsers[5],
+    bio: 'k-pop stan with a soft spot for shoegaze',
+    showsAttended: 43,
+    totalReactions: 178,
+    friendCount: 15,
+    topReactions: ['heart', 'dancing', 'clap'],
+  },
+};
+
+export const mockAllUsers: User[] = [
+  { id: 'u1', name: 'Rose Allegrette', username: 'rose', avatarUrl: 'https://i.pravatar.cc/150?img=1', isOnline: true },
+  ...mockFriends,
+  ...mockOtherUsers,
+];
+
 export const mockCurrentUser: UserProfile = {
   id: 'u1',
   name: 'Rose Allegrette',
