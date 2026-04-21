@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Linking } from 'react-native';
+import { View, ScrollView, StyleSheet, Linking, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -140,12 +140,12 @@ export default function ShowDetailScreen() {
                   </Text>
                   <View style={styles.friendsRow}>
                     {show.friendsGoing.map((friend) => (
-                      <View key={friend.id} style={styles.friendItem}>
+                      <Pressable key={friend.id} style={styles.friendItem} onPress={() => router.push(`/user/${friend.id}`)}>
                         <Avatar uri={friend.avatarUrl} size="md" showOnline isOnline={friend.isOnline} />
                         <Text variant="micro" color="textSecondary" style={{ marginTop: 4 }}>
                           {friend.name.split(' ')[0]}
                         </Text>
-                      </View>
+                      </Pressable>
                     ))}
                   </View>
                 </View>
@@ -157,12 +157,12 @@ export default function ShowDetailScreen() {
                   </Text>
                   <View style={styles.friendsRow}>
                     {show.friendsInterested.map((friend) => (
-                      <View key={friend.id} style={styles.friendItem}>
+                      <Pressable key={friend.id} style={styles.friendItem} onPress={() => router.push(`/user/${friend.id}`)}>
                         <Avatar uri={friend.avatarUrl} size="md" showOnline isOnline={friend.isOnline} />
                         <Text variant="micro" color="textSecondary" style={{ marginTop: 4 }}>
                           {friend.name.split(' ')[0]}
                         </Text>
-                      </View>
+                      </Pressable>
                     ))}
                   </View>
                 </View>
