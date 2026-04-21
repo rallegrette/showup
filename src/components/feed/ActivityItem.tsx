@@ -31,12 +31,14 @@ export function ActivityItem({ activity }: ActivityItemProps) {
       onPress={() => router.push(`/show/${activity.show.id}`)}
       style={({ pressed }) => [styles.container, pressed && styles.pressed]}
     >
-      <Avatar
-        uri={activity.user.avatarUrl}
-        size="md"
-        showOnline
-        isOnline={activity.user.isOnline}
-      />
+      <Pressable onPress={() => router.push(`/user/${activity.user.id}`)}>
+        <Avatar
+          uri={activity.user.avatarUrl}
+          size="md"
+          showOnline
+          isOnline={activity.user.isOnline}
+        />
+      </Pressable>
       <View style={styles.content}>
         <Text variant="callout" numberOfLines={2}>
           <Text variant="calloutMedium">{activity.user.name}</Text>
