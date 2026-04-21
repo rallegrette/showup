@@ -45,6 +45,13 @@ export default function RootLayout() {
             animation: 'slide_from_right',
           }}
         />
+        <Stack.Screen
+          name="search"
+          options={{
+            presentation: 'card',
+            animation: 'slide_from_bottom',
+          }}
+        />
       </Stack>
     </View>
   );
